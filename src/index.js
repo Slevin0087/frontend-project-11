@@ -3,57 +3,8 @@ import './styles.scss';
 import 'bootstrap';
 import * as yup from 'yup';
 import axios from 'axios';
-import onChange from 'on-change';
 import i18nextInit from './i18next';
-
-const form = document.querySelector('.rss-form');
-const btn = document.querySelector('button[type="submit"]');
-const input = document.getElementById('url-input');
-const feedback = document.querySelector('.feedback');
-
-function renderText(feedbackElement, text) {
-  feedbackElement.textContent = '';
-  feedbackElement.textContent = text;
-};
-
-const state = {
-  formFeeds: {
-    process: 'filling',
-    arrUrls: [],
-  }
-};
-
-const watchedUrlValid = onChange(state, (path, value) => {
-  switch (path) {
-    case 'formFeeds.process':
-      switch (value) {
-        case 'processing':
-          console.log('case1');
-          btn.disabled = true;
-          input.readOnly = true;
-          break;
-        case 'failed':
-          console.log('case2');
-          input.style.borderColor = 'red';
-          input.readOnly = false;
-          btn.disabled = false;
-          break;
-        case 'processed':
-          console.log('case3');
-          input.value = '';
-          input.style.borderColor = '';
-          btn.disabled = false;
-          input.readOnly = false;
-          input.focus();
-          break;
-        default:
-          throw new Error('Ошибка view(неверное value - статус состояния формы)');
-      }
-      break;
-    default:
-      throw new Error('Ошибка view(неверный path - путь до состояния формы)')
-  }
-});
+import { renderText, view } from './views';
 
 function app() {
 
@@ -70,6 +21,15 @@ function app() {
         },
       });
 
+      const state = {
+        formFeeds: {
+          process: 'filling',
+          arrUrls: [],
+        }
+      };
+
+      const watchedForm = view(state);
+ 
       function typeError(error) {
         if (error.name === 'ValidationError') {
           if (error.errors.includes(i18nextInstance.t('feedback.notEmpty'))) {
@@ -91,9 +51,13 @@ function app() {
         return 'feedback.unknownError';
       };
 
+      const feedback = document.querySelector('.feedback');
+      const form = document.querySelector('.rss-form');
+
       form.addEventListener('submit', (e) => {
+        console.log('submit');
         e.preventDefault();
-        watchedUrlValid.formFeeds.process = 'processing';
+        watchedForm.formFeeds.process = 'processing';
         const formData = new FormData(e.target);
         const url = formData.get('url').trim();
         (function schema() {
@@ -102,13 +66,13 @@ function app() {
           .validate(url)
           .then((url) => {
             state.formFeeds.arrUrls.push(url);
-            watchedUrlValid.formFeeds.process = 'processed';
+            watchedForm.formFeeds.process = 'processed';
             const successText = i18nextInstance.t('feedback.success');
             renderText(feedback, successText);
           })
           .catch((error) => {
             console.log('catch');
-            watchedUrlValid.formFeeds.process = 'failed';
+            watchedForm.formFeeds.process = 'failed';
             const errorText = i18nextInstance.t(typeError(error));
             switch (errorText) {
               case i18nextInstance.t('feedback.invalidUrl'):
