@@ -16,7 +16,7 @@ function createFeedsAndPostsData(state, feeds, posts, arr) {
   posts.forEach(item => {
     const titlePost = item.querySelector(arr[0]).textContent;
     // console.log('titlePost:', titlePost);
-    
+
     const descriptionPost = item.querySelector(arr[1]).textContent;
     // console.log('descriptionPost:', descriptionPost);
 
@@ -93,6 +93,7 @@ function app() {
       };
 
       const form = document.querySelector('.rss-form');
+      console.log('form:', form);
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -116,8 +117,9 @@ function app() {
           })
           .then(() => {
             const postsContainer = document.querySelector('.posts');
+            console.log('postsContainer:', postsContainer);
             postsContainer.addEventListener('click', (e) => {
-              const postId = e.target.dataset.id;             
+              const postId = e.target.dataset.id;
               if (!postId) return;
               const post = state.posts.find((p) => p.id === postId);
               if (!post) return;
@@ -133,6 +135,8 @@ function app() {
 
               if (e.target.tagName === 'BUTTON') {
                 const modal = document.querySelector('#modal');
+                console.log('modal:', modal);
+
                 const modalInstance = new bootstrap.Modal(modal);
                 modalInstance.show();
               }
@@ -145,6 +149,8 @@ function app() {
                   const { posts } = parserResponse(data);
                   const post = posts[0];
                   const newPubDate = post.querySelector('pubDate').textContent;
+                  console.log('newPubDate:', newPubDate);
+
                   const timeNewPubpost = new Date(newPubDate);
                   const itsMore = timeNewPubpost > timeLastPost;
                   if (!itsMore) return;
@@ -154,6 +160,7 @@ function app() {
                     title: post.querySelector('title').textContent,
                     link: post.querySelector('link').textContent,
                   }
+                  console.log('getProperties:', getProperties);
                   renderNewPost(getProperties);
                 })
                 .then(() => {
