@@ -1,7 +1,7 @@
 import onChange from 'on-change';
 
-const submitBtn = document.querySelector('button[type="submit"]');
-const urlInput = document.getElementById('url-input');
+const btn = document.querySelector('button[type="submit"]');
+const input = document.getElementById('url-input');
 const postsElement = document.querySelector('.posts');
 const feedsElement = document.querySelector('.feeds');
 const feedback = document.querySelector('.feedback');
