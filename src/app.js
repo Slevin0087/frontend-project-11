@@ -165,6 +165,8 @@ function app() {
                 return renderFeedbackText(errorText);
               case i18nextInstance.t('feedback.rssParsingError'):
                 return renderFeedbackText(errorText);
+              case i18nextInstance.t('feedback.networkError'):
+                return renderFeedbackText(errorText);
               default:
                 throw new Error(error);
             }
