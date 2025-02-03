@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import uniqueId from 'lodash/uniqueId.js';
 import fetchRSS from './fetchRSS.js';
 import i18nextInit from './i18next.js';
-import { parserResponse } from './parserRSS.js';
+import parserResponse from './parserRSS.js';
 import { renderFeedbackText, view, renderNewPost } from './views.js';
 
 function createFeedsAndPostsData(state, feeds, posts) {
