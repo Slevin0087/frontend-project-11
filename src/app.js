@@ -103,69 +103,69 @@ function app() {
             renderFeedbackText(successText);
             state.lastChecked = state.posts[0].pubDate;
           })
-          .then(() => {
-            const postsContainer = document.querySelector('.posts');
-            postsContainer.addEventListener('click', (e) => {
-              const postId = e.target.dataset.id;
-              if (!postId) return;
-              const post = state.posts.find((p) => p.id === postId);
-              if (!post) return;
-              watchedForm.uiState.modal = {
-                id: post.id,
-                title: post.title,
-                description: post.description,
-                link: post.link,
-              };
-              if (!state.uiState.visitedPosts.includes(post.id)) {
-                state.uiState.visitedPosts = [...state.uiState.visitedPosts, post.id];
-              }
-              if (e.target.tagName === 'BUTTON') {
-                const modal = document.querySelector('#modal');
-                const modalInstance = new bootstrap.Modal(modal);
-                modalInstance.show();
-              }
-            });
-            function addNewPost() {
-              const timeLastPost = new Date(state.lastChecked);
-              fetchRSS(url)
-                .then((data) => {
-                  const { posts } = parserResponse(data);
-                  const post = posts[0];
-                  const newPubDate = post.querySelector('pubDate').textContent;
-                  const timeNewPubpost = new Date(newPubDate);
-                  const itsMore = timeNewPubpost > timeLastPost;
-                  if (!itsMore) return;
-                  state.lastChecked = newPubDate;
-                  const getProperties = {
-                    id: uniqueId(),
-                    title: post.querySelector('title').textContent,
-                    link: post.querySelector('link').textContent,
-                  };
-                  renderNewPost(getProperties);
-                })
-                .then(() => {
-                  setTimeout(addNewPost, 5000);
-                });
+      })
+        .then(() => {
+          const postsContainer = document.querySelector('.posts');
+          postsContainer.addEventListener('click', (e) => {
+            const postId = e.target.dataset.id;
+            if (!postId) return;
+            const post = state.posts.find((p) => p.id === postId);
+            if (!post) return;
+            watchedForm.uiState.modal = {
+              id: post.id,
+              title: post.title,
+              description: post.description,
+              link: post.link,
+            };
+            if (!state.uiState.visitedPosts.includes(post.id)) {
+              state.uiState.visitedPosts = [...state.uiState.visitedPosts, post.id];
             }
-            addNewPost();
-          })
-          .catch((error) => {
-            watchedForm.form.process = 'failed';
-            const errorText = i18nextInstance.t(typeError(error));
-            switch (errorText) {
-              case i18nextInstance.t('feedback.invalidUrl'):
-                return renderFeedbackText(errorText);
-              case i18nextInstance.t('feedback.alreadyExists'):
-                return renderFeedbackText(errorText);
-              case i18nextInstance.t('feedback.rssParsingError'):
-                return renderFeedbackText(errorText);
-              case i18nextInstance.t('feedback.networkError'):
-                return renderFeedbackText(errorText);
-              default:
-                throw new Error(error);
+            if (e.target.tagName === 'BUTTON') {
+              const modal = document.querySelector('#modal');
+              const modalInstance = new bootstrap.Modal(modal);
+              modalInstance.show();
             }
           });
-      });
+          function addNewPost() {
+            const timeLastPost = new Date(state.lastChecked);
+            fetchRSS(url)
+              .then((data) => {
+                const { posts } = parserResponse(data);
+                const post = posts[0];
+                const newPubDate = post.querySelector('pubDate').textContent;
+                const timeNewPubpost = new Date(newPubDate);
+                const itsMore = timeNewPubpost > timeLastPost;
+                if (!itsMore) return;
+                state.lastChecked = newPubDate;
+                const getProperties = {
+                  id: uniqueId(),
+                  title: post.querySelector('title').textContent,
+                  link: post.querySelector('link').textContent,
+                };
+                renderNewPost(getProperties);
+              })
+              .then(() => {
+                setTimeout(addNewPost, 5000);
+              });
+          }
+          addNewPost();
+        })
+        .catch((error) => {
+          watchedForm.form.process = 'failed';
+          const errorText = i18nextInstance.t(typeError(error));
+          switch (errorText) {
+            case i18nextInstance.t('feedback.invalidUrl'):
+              return renderFeedbackText(errorText);
+            case i18nextInstance.t('feedback.alreadyExists'):
+              return renderFeedbackText(errorText);
+            case i18nextInstance.t('feedback.rssParsingError'):
+              return renderFeedbackText(errorText);
+            case i18nextInstance.t('feedback.networkError'):
+              return renderFeedbackText(errorText);
+            default:
+              throw new Error(error);
+          }
+        });
     });
 }
 
