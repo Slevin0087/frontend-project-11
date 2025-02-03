@@ -94,7 +94,6 @@ function app() {
           .then(() => state.form.url.push(url))
           .then(() => fetchRSS(url))
           .then((data) => {
-
             const { feeds, posts } = parserResponse(data);
             createFeedsAndPostsData(state, feeds, posts);
           })
@@ -141,13 +140,13 @@ function app() {
                     id: uniqueId(),
                     title: post.querySelector('title').textContent,
                     link: post.querySelector('link').textContent,
-                  }
+                  };
                   renderNewPost(getProperties);
                 })
                 .then(() => {
                   setTimeout(addNewPost, 5000);
-                })
-            };
+                });
+            }
             addNewPost();
           })
           .catch((error) => {
@@ -165,9 +164,9 @@ function app() {
               default:
                 throw new Error(error);
             }
-          })
+          });
       });
-    })
-};
+    });
+}
 
 export default app;

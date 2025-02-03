@@ -31,7 +31,7 @@ function renderNewPost(properties) {
   li.classList.add(
     'list-group-item',
     'd-flex',
-    'justify-content-between',    
+    'justify-content-between',
     'align-items-start',
     'border-0',
     'border-end-0',
@@ -64,7 +64,7 @@ function renderProcessed(btn, input) {
   input.focus();
 }
 
-function renderModal (m) {
+function renderModal(m) {
   const a = postsElement.querySelector(`[data-id="${m.id}"]`);
   const modal = document.querySelector('#modal');
   const modalTitle = modal.querySelector('.modal-title');
@@ -140,8 +140,12 @@ function renderFeedsAndPosts(titleText, state) {
       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
       a.classList.add('fw-bold');
       li.classList.add(
-        'list-group-item', 'd-flex', 'justify-content-between',
-        'align-items-start', 'border-0', 'border-end-0'
+        'list-group-item',
+        'd-flex',
+        'justify-content-between',
+        'align-items-start',
+        'border-0',
+        'border-end-0',
       );
 
       li.append(a, button);
