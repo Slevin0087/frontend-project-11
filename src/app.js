@@ -148,17 +148,20 @@ function app() {
                 .then((data) => {
                   const { posts } = parserResponse(data);
                   const post = posts[0];
-                  const newPubDate = post.querySelector('pubDate').textContent;
+                  const pb = 'pubDate';
+                  const newPubDate = post.querySelector(pb).textContent;
                   console.log('newPubDate:', newPubDate);
 
                   const timeNewPubpost = new Date(newPubDate);
                   const itsMore = timeNewPubpost > timeLastPost;
                   if (!itsMore) return;
                   state.lastChecked = newPubDate;
+                  const text1 = 'title';
+                  const text2 = 'link';
                   const getProperties = {
                     id: uniqueId(),
-                    title: post.querySelector('title').textContent,
-                    link: post.querySelector('link').textContent,
+                    title: post.querySelector(text1).textContent,
+                    link: post.querySelector(text2).textContent,
                   }
                   console.log('getProperties:', getProperties);
                   renderNewPost(getProperties);
