@@ -7,25 +7,17 @@ import { parserResponse } from './parserRSS';
 import { renderFeedbackText, view, renderNewPost } from './views';
 import uniqueId from 'lodash/uniqueId.js';
 
-function createFeedsAndPostsData(state, feeds, posts, arr) {
+function createFeedsAndPostsData(state, feeds, posts) {
   state.feeds.push({
     id: 1,
     title: feeds.title,
     description: feeds.description
   });
   posts.forEach(item => {
-    const titlePost = item.querySelector(arr[0]).textContent;
-    // console.log('titlePost:', titlePost);
-
-    const descriptionPost = item.querySelector(arr[1]).textContent;
-    // console.log('descriptionPost:', descriptionPost);
-
-    const linkPost = item.querySelector(arr[2]).textContent;
-    // console.log('linkPost:', linkPost);
-
-    const pubDate = item.querySelector(arr[3]).textContent;
-    // console.log('pubDate:', pubDate);
-
+    const descriptionPost = item.querySelector('description').textContent;
+    const titlePost = item.querySelector('title').textContent;
+    const linkPost = item.querySelector('link').textContent;
+    const pubDate = item.querySelector('pubDate').textContent;
     state.posts.push({
       id: uniqueId(),
       title: titlePost,
@@ -93,8 +85,6 @@ function app() {
       };
 
       const form = document.querySelector('.rss-form');
-      console.log('form:', form);
-
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         watchedForm.form.process = 'processing';
@@ -102,12 +92,15 @@ function app() {
         const url = formData.get('url').trim();
         schema(state.form.url)
           .validate(url)
-          .then(() => state.form.url.push(url)
+          .then((result) => {
+            state.form.url.push(url);
+          }
           )
           .then(() => fetchRSS(url))
           .then((data) => {
+
             const { feeds, posts } = parserResponse(data);
-            createFeedsAndPostsData(state, feeds, posts, ['title', 'description', 'link', 'pubDate']);
+            createFeedsAndPostsData(state, feeds, posts);
           })
           .then(() => {
             watchedForm.form.process = 'processed';
@@ -117,7 +110,6 @@ function app() {
           })
           .then(() => {
             const postsContainer = document.querySelector('.posts');
-            console.log('postsContainer:', postsContainer);
             postsContainer.addEventListener('click', (e) => {
               const postId = e.target.dataset.id;
               if (!postId) return;
@@ -132,11 +124,8 @@ function app() {
               if (!state.uiState.visitedPosts.includes(post.id)) {
                 state.uiState.visitedPosts = [...state.uiState.visitedPosts, post.id];
               }
-
               if (e.target.tagName === 'BUTTON') {
                 const modal = document.querySelector('#modal');
-                console.log('modal:', modal);
-
                 const modalInstance = new bootstrap.Modal(modal);
                 modalInstance.show();
               }
@@ -148,22 +137,16 @@ function app() {
                 .then((data) => {
                   const { posts } = parserResponse(data);
                   const post = posts[0];
-                  const pb = 'pubDate';
-                  const newPubDate = post.querySelector(pb).textContent;
-                  console.log('newPubDate:', newPubDate);
-
+                  const newPubDate = post.querySelector('pubDate').textContent;
                   const timeNewPubpost = new Date(newPubDate);
                   const itsMore = timeNewPubpost > timeLastPost;
                   if (!itsMore) return;
                   state.lastChecked = newPubDate;
-                  const text1 = 'title';
-                  const text2 = 'link';
                   const getProperties = {
                     id: uniqueId(),
-                    title: post.querySelector(text1).textContent,
-                    link: post.querySelector(text2).textContent,
+                    title: post.querySelector('title').textContent,
+                    link: post.querySelector('link').textContent,
                   }
-                  console.log('getProperties:', getProperties);
                   renderNewPost(getProperties);
                 })
                 .then(() => {
@@ -179,6 +162,8 @@ function app() {
               case i18nextInstance.t('feedback.invalidUrl'):
                 return renderFeedbackText(errorText);
               case i18nextInstance.t('feedback.alreadyExists'):
+                return renderFeedbackText(errorText);
+              case i18nextInstance.t('feedback.rssParsingError'):
                 return renderFeedbackText(errorText);
               default:
                 throw new Error(error);
