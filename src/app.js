@@ -142,8 +142,8 @@ function app() {
               default:
                 throw new Error(error);
             }
-          })
-      })
+          });
+      });
       postsContainer.addEventListener('click', (e) => {
         const postId = e.target.dataset.id;
         if (!postId) return;

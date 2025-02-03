@@ -41,12 +41,12 @@ function renderNewPost(properties) {
   getUl.prepend(li);
 }
 
-function renderProcessing(btn, input) {
+function renderProcessing() {
   btn.disabled = true;
   input.readOnly = true;
 }
 
-function renderFailed(btn, input) {
+function renderFailed() {
   feedback.classList.add('text-danger');
   feedback.classList.remove('text-success');
   input.style.borderColor = 'red';
@@ -54,7 +54,7 @@ function renderFailed(btn, input) {
   btn.disabled = false;
 }
 
-function renderProcessed(btn, input) {
+function renderProcessed() {
   feedback.classList.remove('text-danger');
   feedback.classList.add('text-success');
   input.value = '';
@@ -161,13 +161,13 @@ export function view(state) {
       case 'form.process':
         switch (value) {
           case 'processing':
-            renderProcessing(submitBtn, urlInput);
+            renderProcessing();
             break;
           case 'failed':
-            renderFailed(submitBtn, urlInput);
+            renderFailed();
             break;
           case 'processed':
-            renderProcessed(submitBtn, urlInput);
+            renderProcessed();
             feedsElement.innerHTML = '';
             postsElement.innerHTML = '';
             renderFeedsAndPosts('Фиды', state);
