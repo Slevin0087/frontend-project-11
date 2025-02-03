@@ -13,8 +13,6 @@ function renderNewPost(properties) {
     title,
     link,
   } = properties;
-
-  console.log('getUl:', getUl);
   const a = document.createElement('a');
   const button = document.createElement('button');
   const li = document.createElement('li');
@@ -31,8 +29,12 @@ function renderNewPost(properties) {
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
   a.classList.add('fw-bold');
   li.classList.add(
-    'list-group-item', 'd-flex', 'justify-content-between',
-    'align-items-start', 'border-0', 'border-end-0'
+    'list-group-item',
+    'd-flex',
+    'justify-content-between',    
+    'align-items-start',
+    'border-0',
+    'border-end-0',
   );
 
   li.append(a, button);
@@ -42,7 +44,7 @@ function renderNewPost(properties) {
 function renderProcessing(btn, input) {
   btn.disabled = true;
   input.readOnly = true;
-};
+}
 
 function renderFailed(btn, input) {
   feedback.classList.add('text-danger');
@@ -50,7 +52,7 @@ function renderFailed(btn, input) {
   input.style.borderColor = 'red';
   input.readOnly = false;
   btn.disabled = false;
-};
+}
 
 function renderProcessed(btn, input) {
   feedback.classList.remove('text-danger');
@@ -60,10 +62,10 @@ function renderProcessed(btn, input) {
   btn.disabled = false;
   input.readOnly = false;
   input.focus();
-};
+}
 
 function renderModal (m) {
-  const a = postsElement.querySelector(`[data-id="${m.id}"]`);  
+  const a = postsElement.querySelector(`[data-id="${m.id}"]`);
   const modal = document.querySelector('#modal');
   const modalTitle = modal.querySelector('.modal-title');
   const modalBody = modal.querySelector('.modal-body');
@@ -74,15 +76,14 @@ function renderModal (m) {
   modalTitle.textContent = m.title;
   modalBody.textContent = m.description;
   modalLink.href = m.link;
-};
+}
 
 export function renderFeedbackText(text) {
   feedback.textContent = '';
   feedback.textContent = text;
-};
+}
 
 function renderFeedsAndPosts(titleText, state) {
-
   const div = document.createElement('div');
   const divTitle = document.createElement('div');
   const h2 = document.createElement('h2');
@@ -105,19 +106,19 @@ function renderFeedsAndPosts(titleText, state) {
     const li = document.createElement('li');
     li.classList.add('list-group-item', 'border-0', 'border-end-0');
     h2.textContent = titleText;
-    state.feeds.forEach(feed => {
+    state.feeds.forEach((feed) => {
       h3.textContent = feed.title;
       p.textContent = feed.description;
-    })
+    });
     li.append(h3, p);
     ul.append(li);
     feedsElement.append(div);
-  };
+  }
 
   if (titleText === 'Посты') {
     postsElement.text = '';
     h2.textContent = titleText;
-    state.posts.forEach(post => {
+    state.posts.forEach((post) => {
       const {
         id,
         title,
@@ -152,7 +153,6 @@ function renderFeedsAndPosts(titleText, state) {
 
 export function view(state) {
   const watchedForm = onChange(state, (path, value) => {
-
     switch (path) {
       case 'form.process':
         switch (value) {
@@ -160,7 +160,7 @@ export function view(state) {
             renderProcessing(submitBtn, urlInput);
             break;
           case 'failed':
-            renderFailed(submitBtn, urlInput)
+            renderFailed(submitBtn, urlInput);
             break;
           case 'processed':
             renderProcessed(submitBtn, urlInput);
@@ -177,10 +177,10 @@ export function view(state) {
         renderModal(state.uiState.modal);
         break;
       default:
-        throw new Error('Ошибка view(неверный path)')
+        throw new Error('Ошибка view(неверный path)');
     }
   });
   return watchedForm;
-};
+}
 
 export { renderNewPost };

@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import ru from './locales/ru';
+import ru from './locales/ru.js';
 
 export default () => {
   const i18nInstance = i18next.createInstance(); // Новый экземпляр i18next

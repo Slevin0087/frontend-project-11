@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
 export default (url) => {
-  const proxyUrl = `https://allorigins.hexlet.app/get?disableCache=true&url=${url}`; 
+  const proxyUrl = `https://allorigins.hexlet.app/get?disableCache=true&url=${url}`;
   return axios.get(proxyUrl)
     .then((response) => response.data.contents)
-    .catch(() => {     
+    .catch(() => {
       throw new Error('networkError');
     });
 };

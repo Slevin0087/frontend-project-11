@@ -1,19 +1,19 @@
 import './styles.scss';
 import * as bootstrap from 'bootstrap';
 import * as yup from 'yup';
-import fetchRSS from './fetchRSS';
-import i18nextInit from './i18next';
-import { parserResponse } from './parserRSS';
-import { renderFeedbackText, view, renderNewPost } from './views';
 import uniqueId from 'lodash/uniqueId.js';
+import fetchRSS from './fetchRSS.js';
+import i18nextInit from './i18next.js';
+import { parserResponse } from './parserRSS.js';
+import { renderFeedbackText, view, renderNewPost } from './views.js';
 
 function createFeedsAndPostsData(state, feeds, posts) {
   state.feeds.push({
     id: 1,
     title: feeds.title,
-    description: feeds.description
+    description: feeds.description,
   });
-  posts.forEach(item => {
+  posts.forEach((item) => {
     const descriptionPost = item.querySelector('description').textContent;
     const titlePost = item.querySelector('title').textContent;
     const linkPost = item.querySelector('link').textContent;
@@ -23,13 +23,12 @@ function createFeedsAndPostsData(state, feeds, posts) {
       title: titlePost,
       description: descriptionPost,
       link: linkPost,
-      pubDate: pubDate,
+      pubDate,
     });
-  })
-};
+  });
+}
 
 function app() {
-
   i18nextInit()
     .then((i18nextInstance) => {
       yup.setLocale({
@@ -82,7 +81,7 @@ function app() {
           return 'feedback.networkError';
         }
         return 'feedback.unknownError';
-      };
+      }
 
       const form = document.querySelector('.rss-form');
       form.addEventListener('submit', (e) => {
@@ -92,10 +91,7 @@ function app() {
         const url = formData.get('url').trim();
         schema(state.form.url)
           .validate(url)
-          .then((result) => {
-            state.form.url.push(url);
-          }
-          )
+          .then(() => state.form.url.push(url))
           .then(() => fetchRSS(url))
           .then((data) => {
 
