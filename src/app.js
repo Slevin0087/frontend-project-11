@@ -129,7 +129,6 @@ function app() {
                 const modalInstance = new bootstrap.Modal(modal);
                 modalInstance.show();
               }
-
             });
             function addNewPost() {
               const timeLastPost = new Date(state.lastChecked);
