@@ -7,17 +7,25 @@ import { parserResponse } from './parserRSS';
 import { renderFeedbackText, view, renderNewPost } from './views';
 import uniqueId from 'lodash/uniqueId.js';
 
-function createFeedsAndPostsData(state, feeds, posts) {
+function createFeedsAndPostsData(state, feeds, posts, arr) {
   state.feeds.push({
     id: 1,
     title: feeds.title,
     description: feeds.description
   });
   posts.forEach(item => {
-    const titlePost = item.querySelector('title').textContent;
-    const descriptionPost = item.querySelector('description').textContent;
-    const linkPost = item.querySelector('link').textContent;
-    const pubDate = item.querySelector('pubDate').textContent;
+    const titlePost = item.querySelector(arr[0]).textContent;
+    // console.log('titlePost:', titlePost);
+    
+    const descriptionPost = item.querySelector(arr[1]).textContent;
+    // console.log('descriptionPost:', descriptionPost);
+
+    const linkPost = item.querySelector(arr[2]).textContent;
+    // console.log('linkPost:', linkPost);
+
+    const pubDate = item.querySelector(arr[3]).textContent;
+    // console.log('pubDate:', pubDate);
+
     state.posts.push({
       id: uniqueId(),
       title: titlePost,
@@ -98,7 +106,7 @@ function app() {
           .then(() => fetchRSS(url))
           .then((data) => {
             const { feeds, posts } = parserResponse(data);
-            createFeedsAndPostsData(state, feeds, posts);
+            createFeedsAndPostsData(state, feeds, posts, ['title', 'description', 'link', 'pubDate']);
           })
           .then(() => {
             watchedForm.form.process = 'processed';
