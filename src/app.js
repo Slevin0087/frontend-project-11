@@ -154,33 +154,41 @@ function app() {
         modalInstance.show();
       }
     });
+    return state;
+  })
+  .then((state) => {
     function addNewPost() {
-      const timeLastPost = new Date(state.lastChecked);
-      if (!state.form.url) return;
-      else {
-        fetchRSS(state.form.url)
-          .then((data) => {
-            const { posts } = parserResponse(data);
-            const post = posts[0];
-            const newPubDate = post.querySelector("pubDate").textContent;
-            const timeNewPubpost = new Date(newPubDate);
-            const itsMore = timeNewPubpost > timeLastPost;
-            if (!itsMore) return;
-            state.lastChecked = newPubDate;
-            const getProperties = {
-              id: uniqueId(),
-              title: post.querySelector("title").textContent,
-              link: post.querySelector("link").textContent,
-            };
-            renderNewPost(getProperties);
-          })
-          .then(() => {
-            setTimeout(addNewPost, 5000);
-          });
-      }
+    const timeLastPost = new Date(state.lastChecked);
+    console.log('timeLastPost:', timeLastPost); 
+    console.log('state.form.url:', state.form.url);      
+    if (state.form.url.length === 0) {
+      console.log('in if');        
+      return setTimeout(addNewPost, 5000);
+    } else {
+      console.log('in else');        
+      fetchRSS(state.form.url)
+        .then((data) => {
+          const { posts } = parserResponse(data);
+          const post = posts[0];
+          const newPubDate = post.querySelector("pubDate").textContent;
+          const timeNewPubpost = new Date(newPubDate);
+          const itsMore = timeNewPubpost > timeLastPost;
+          if (!itsMore) return;
+          state.lastChecked = newPubDate;
+          const getProperties = {
+            id: uniqueId(),
+            title: post.querySelector("title").textContent,
+            link: post.querySelector("link").textContent,
+          };
+          renderNewPost(getProperties);
+        })
+        .then(() => {
+          return setTimeout(addNewPost, 5000);
+        })
     }
-    addNewPost();
-  });
+  }
+  addNewPost();
+})
 }
 
 export default app;
