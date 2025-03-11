@@ -5,11 +5,7 @@ import uniqueId from "lodash/uniqueId.js";
 import fetchRSS from "./fetchRSS.js";
 import i18nextInit from "./i18next.js";
 import parserResponse from "./parserRSS.js";
-import {
-  renderFeedbackText,
-  renderPosts,
-  view,
-} from "./views.js";
+import { renderFeedbackText, renderPosts, view } from "./views.js";
 
 const elements = {
   form: document.querySelector(".rss-form"),
@@ -175,8 +171,9 @@ function app() {
     };
     const startUpdateChecking = () => {
       const updatePromises = state.feeds.map(checkUpdatesForFeed);
-      Promise.all(updatePromises)
-        .then(() => setTimeout(startUpdateChecking, 5000))
+      Promise.all(updatePromises).then(() =>
+        setTimeout(startUpdateChecking, 5000)
+      );
     };
   });
 }
