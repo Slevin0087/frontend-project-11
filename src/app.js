@@ -1,15 +1,15 @@
-import "./styles.scss";
-import * as bootstrap from "bootstrap";
-import * as yup from "yup";
-import uniqueId from "lodash/uniqueId.js";
-import fetchRSS from "./fetchRSS.js";
-import i18nextInit from "./i18next.js";
-import parserResponse from "./parserRSS.js";
-import { renderFeedbackText, renderPosts, view } from "./views.js";
+import './styles.scss';
+import * as bootstrap from 'bootstrap';
+import * as yup from 'yup';
+import uniqueId from 'lodash/uniqueId.js';
+import fetchRSS from './fetchRSS.js';
+import i18nextInit from './i18next.js';
+import parserResponse from './parserRSS.js';
+import { renderFeedbackText, renderPosts, view } from './views.js';
 
 const elements = {
-  form: document.querySelector(".rss-form"),
-  postsContainer: document.querySelector(".posts"),
+  form: document.querySelector('.rss-form'),
+  postsContainer: document.querySelector('.posts'),
 };
 
 function schema(arrUrls) {
@@ -17,43 +17,43 @@ function schema(arrUrls) {
 }
 
 function typeError(error, i18nextInstance) {
-  if (error.name === "ValidationError") {
-    if (error.errors.includes(i18nextInstance.t("feedback.notEmpty"))) {
-      return "feedback.notEmpty";
+  if (error.name === 'ValidationError') {
+    if (error.errors.includes(i18nextInstance.t('feedback.notEmpty'))) {
+      return 'feedback.notEmpty';
     }
-    if (error.errors.includes(i18nextInstance.t("feedback.alreadyExists"))) {
-      return "feedback.alreadyExists";
+    if (error.errors.includes(i18nextInstance.t('feedback.alreadyExists'))) {
+      return 'feedback.alreadyExists';
     }
-    if (error.errors.includes(i18nextInstance.t("feedback.invalidUrl"))) {
-      return "feedback.invalidUrl";
+    if (error.errors.includes(i18nextInstance.t('feedback.invalidUrl'))) {
+      return 'feedback.invalidUrl';
     }
   }
-  if (error.message === "rssParsingError") {
-    return "feedback.rssParsingError";
+  if (error.message === 'rssParsingError') {
+    return 'feedback.rssParsingError';
   }
-  if (error.message === "networkError") {
-    return "feedback.networkError";
+  if (error.message === 'networkError') {
+    return 'feedback.networkError';
   }
-  return "feedback.unknownError";
+  return 'feedback.unknownError';
 }
 
 function app() {
   i18nextInit().then((i18nextInstance) => {
     yup.setLocale({
       mixed: {
-        default: i18nextInstance.t("feedback.unknownError"),
-        required: i18nextInstance.t("feedback.notEmpty"),
-        notOneOf: i18nextInstance.t("feedback.alreadyExists"),
+        default: i18nextInstance.t('feedback.unknownError'),
+        required: i18nextInstance.t('feedback.notEmpty'),
+        notOneOf: i18nextInstance.t('feedback.alreadyExists'),
       },
       string: {
-        url: i18nextInstance.t("feedback.invalidUrl"),
+        url: i18nextInstance.t('feedback.invalidUrl'),
       },
     });
 
     const state = {
       form: {
         url: [],
-        process: "filling",
+        process: 'filling',
       },
       feeds: [],
       posts: [],
@@ -66,11 +66,11 @@ function app() {
 
     const watchedForm = view(state);
 
-    elements.form.addEventListener("submit", (e) => {
+    elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
-      watchedForm.form.process = "processing";
+      watchedForm.form.process = 'processing';
       const formData = new FormData(e.target);
-      const url = formData.get("url").trim();
+      const url = formData.get('url').trim();
       schema(state.form.url)
         .validate(url)
         .then(() => {
@@ -92,31 +92,31 @@ function app() {
 
           state.posts.push(...newPosts);
           state.form.url.push(url);
-          watchedForm.form.process = "processed";
-          const successText = i18nextInstance.t("feedback.success");
+          watchedForm.form.process = 'processed';
+          const successText = i18nextInstance.t('feedback.success');
           renderFeedbackText(successText);
         })
         .then(() => startUpdateChecking())
         .catch((error) => {
-          watchedForm.form.process = "failed";
+          watchedForm.form.process = 'failed';
           const errorText = i18nextInstance.t(
             typeError(error, i18nextInstance)
           );
           switch (errorText) {
-            case i18nextInstance.t("feedback.invalidUrl"):
+            case i18nextInstance.t('feedback.invalidUrl'):
               return renderFeedbackText(errorText);
-            case i18nextInstance.t("feedback.alreadyExists"):
+            case i18nextInstance.t('feedback.alreadyExists'):
               return renderFeedbackText(errorText);
-            case i18nextInstance.t("feedback.rssParsingError"):
+            case i18nextInstance.t('feedback.rssParsingError'):
               return renderFeedbackText(errorText);
-            case i18nextInstance.t("feedback.networkError"):
+            case i18nextInstance.t('feedback.networkError'):
               return renderFeedbackText(errorText);
             default:
               throw new Error(error);
           }
         });
     });
-    elements.postsContainer.addEventListener("click", (e) => {
+    elements.postsContainer.addEventListener('click', (e) => {
       const postId = e.target.dataset.id;
       if (!postId) return;
       const post = state.posts.find((p) => p.id === postId);
@@ -131,8 +131,8 @@ function app() {
         state.uiState.visitedPosts = [...state.uiState.visitedPosts, post.id];
         renderPosts(state.posts, state);
       }
-      if (e.target.tagName === "BUTTON") {
-        const modal = document.querySelector("#modal");
+      if (e.target.tagName === 'BUTTON') {
+        const modal = document.querySelector('#modal');
         const modalInstance = new bootstrap.Modal(modal);
         modalInstance.show();
       }
@@ -172,9 +172,8 @@ function app() {
     };
     const startUpdateChecking = () => {
       const updatePromises = state.feeds.map(checkUpdatesForFeed);
-      Promise.all(updatePromises).then(() =>
-        setTimeout(startUpdateChecking, 5000)
-      );
+      Promise.all(updatePromises)
+      .then(() => setTimeout(startUpdateChecking, 5000));
     };
   });
 }
