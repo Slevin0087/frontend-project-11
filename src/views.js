@@ -117,8 +117,14 @@ function renderPosts(posts, state) {
     button.setAttribute("data-bs-target", "#modal");
     button.setAttribute("data-id", `${id}`);
     button.classList.add("btn", "btn-outline-primary", "btn-sm");
-    a.classList.toggle('fw-bold', !state.uiState.visitedPosts.includes(post.id));
-    a.classList.toggle('fw-normal', state.uiState.visitedPosts.includes(post.id));
+    a.classList.toggle(
+      "fw-bold",
+      !state.uiState.visitedPosts.includes(post.id)
+    );
+    a.classList.toggle(
+      "fw-normal",
+      state.uiState.visitedPosts.includes(post.id)
+    );
     // a.classList.add("fw-bold");
     li.classList.add(
       "list-group-item",
