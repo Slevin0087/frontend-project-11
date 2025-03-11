@@ -8,41 +8,6 @@ const domElements = {
   feedsElement: document.querySelector('.feeds')
 }
 
-function renderNewPost(properties) {
-  const getUl = domElements.postsElement.querySelector('ul');
-  const {
-    id,
-    title,
-    link,
-  } = properties;
-  const a = document.createElement('a');
-  const button = document.createElement('button');
-  const li = document.createElement('li');
-  a.href = link;
-  a.textContent = title;
-  button.textContent = 'Просмотр';
-  a.setAttribute('target', '_blank');
-  a.setAttribute('rel', 'noopener noreferrer');
-  a.setAttribute('data-id', `${id}`);
-  button.setAttribute('type', 'button');
-  button.setAttribute('data-bs-toggle', 'modal');
-  button.setAttribute('data-bs-target', '#modal');
-  button.setAttribute('data-id', `${id}`);
-  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-  a.classList.add('fw-bold');
-  li.classList.add(
-    'list-group-item',
-    'd-flex',
-    'justify-content-between',
-    'align-items-start',
-    'border-0',
-    'border-end-0',
-  );
-
-  li.append(a, button);
-  getUl.prepend(li);
-}
-
 function renderProcessing() {
   domElements.btn.disabled = true;
   domElements.input.readOnly = true;
@@ -104,8 +69,6 @@ function renderFeeds(feeds) {
   divTitle.append(h2);
   div.append(divTitle, ul);
 
-
-  // feedsElement.textContent = '';
   const li = document.createElement('li');
   li.classList.add('list-group-item', 'border-0', 'border-end-0');
   h2.textContent = 'Фиды';
@@ -115,10 +78,10 @@ function renderFeeds(feeds) {
   });
   li.append(h3, p);
   ul.append(li);
-  domElements.feedsElement.append(div);
+  domElements.feedsElement.appendChild(div);
 };
 
-function renderPosts(posts, state) {
+function renderPosts(posts) {
   domElements.postsElement.innerHTML = '';
   const div = document.createElement('div');
   const divTitle = document.createElement('div');
@@ -171,80 +134,8 @@ function renderPosts(posts, state) {
     li.append(a, button);
     ul.append(li);
   });
-  domElements.postsElement.append(div);
+  domElements.postsElement.appendChild(div);
 };
-
-// function renderFeedsAndPosts(titleText, state) {
-//   const div = document.createElement('div');
-//   const divTitle = document.createElement('div');
-//   const h2 = document.createElement('h2');
-//   const ul = document.createElement('ul');
-//   const h3 = document.createElement('h3');
-//   const p = document.createElement('p');
-
-//   div.classList.add('card', 'border-0');
-//   divTitle.classList.add('card-body');
-//   h2.classList.add('card-title', 'h4');
-//   ul.classList.add('list-group', 'border-0', 'rounded-0');
-//   h3.classList.add('h6', 'm-0');
-//   p.classList.add('m-0', 'small', 'text-black-50');
-
-//   divTitle.append(h2);
-//   div.append(divTitle, ul);
-
-//   if (titleText === 'Фиды') {
-//     feedsElement.textContent = '';
-//     const li = document.createElement('li');
-//     li.classList.add('list-group-item', 'border-0', 'border-end-0');
-//     h2.textContent = titleText;
-//     state.feeds.forEach((feed) => {
-//       h3.textContent = feed.title;
-//       p.textContent = feed.description;
-//     });
-//     li.append(h3, p);
-//     ul.append(li);
-//     feedsElement.append(div);
-//   }
-
-//   if (titleText === 'Посты') {
-//     postsElement.text = '';
-//     h2.textContent = titleText;
-//     state.posts.forEach((post) => {
-//       const {
-//         id,
-//         title,
-//         link,
-//       } = post;
-//       const a = document.createElement('a');
-//       const button = document.createElement('button');
-//       const li = document.createElement('li');
-//       a.href = link;
-//       a.textContent = title;
-//       a.setAttribute('target', '_blank');
-//       a.setAttribute('rel', 'noopener noreferrer');
-//       a.setAttribute('data-id', `${id}`);
-//       button.textContent = 'Просмотр';
-//       button.setAttribute('type', 'button');
-//       button.setAttribute('data-bs-toggle', 'modal');
-//       button.setAttribute('data-bs-target', '#modal');
-//       button.setAttribute('data-id', `${id}`);
-//       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-//       a.classList.add('fw-bold');
-//       li.classList.add(
-//         'list-group-item',
-//         'd-flex',
-//         'justify-content-between',
-//         'align-items-start',
-//         'border-0',
-//         'border-end-0',
-//       );
-
-//       li.append(a, button);
-//       ul.append(li);
-//     });
-//     postsElement.append(div);
-//   }
-// }
 
 function view(state) {
   const watchedForm = onChange(state, (path, value) => {
@@ -260,15 +151,13 @@ function view(state) {
           case 'processed':
             renderProcessed();
             renderFeeds(state.feeds)
-            renderPosts(state.posts, state)
+            renderPosts(state.posts)
             break;
           default:
             throw new Error('Ошибка view(неверное value - статус состояния формы)');
         }
         break;
       case 'uiState.modal':
-        console.log('click in view');
-        console.log('state.uiState.modal:', state.uiState.modal);
         renderModal(state.uiState.modal);
         break;
       default:
@@ -278,4 +167,4 @@ function view(state) {
   return watchedForm;
 }
 
-export { renderNewPost, renderFeedbackText, renderPosts, view };
+export { renderFeedbackText, renderPosts, view };
