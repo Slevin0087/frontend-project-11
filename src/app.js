@@ -122,14 +122,14 @@ function app() {
       const post = state.posts.find((p) => p.id === postId);
       if (!post) return;
       watchedForm.uiState.modal = {
-        id: post.id,
+        // id: post.id,
         title: post.title,
         description: post.description,
         link: post.link,
       };
       if (!state.uiState.visitedPosts.includes(post.id)) {
         state.uiState.visitedPosts = [...state.uiState.visitedPosts, post.id];
-        renderPosts(state.posts);
+        renderPosts(state.posts, state);
       }
       if (e.target.tagName === "BUTTON") {
         const modal = document.querySelector("#modal");
@@ -137,6 +137,7 @@ function app() {
         modalInstance.show();
       }
     });
+
     const checkUpdatesForFeed = (feed) => {
       fetchRSS(feed.url)
         .then((data) => {
@@ -162,7 +163,7 @@ function app() {
             });
 
             state.lastChecked[feed.url] = new Date();
-            renderPosts(state.posts);
+            renderPosts(state.posts, state);
           }
         })
         .catch((error) => {

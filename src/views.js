@@ -32,13 +32,13 @@ function renderProcessed() {
 }
 
 function renderModal(m) {
-  const a = domElements.postsElement.querySelector(`[data-id="${m.id}"]`);
+  // const a = domElements.postsElement.querySelector(`[data-id="${m.id}"]`);
   const modal = document.querySelector("#modal");
   const modalTitle = modal.querySelector(".modal-title");
   const modalBody = modal.querySelector(".modal-body");
   const modalLink = modal.querySelector(".full-article");
-  a.classList.remove("fw-bold");
-  a.classList.add("fw-normal");
+  // a.classList.remove("fw-bold");
+  // a.classList.add("fw-normal");
 
   modalTitle.textContent = m.title;
   modalBody.textContent = m.description;
@@ -81,7 +81,7 @@ function renderFeeds(feeds) {
   domElements.feedsElement.append(div);
 }
 
-function renderPosts(posts) {
+function renderPosts(posts, state) {
   domElements.postsElement.innerHTML = "";
   const div = document.createElement("div");
   const divTitle = document.createElement("div");
@@ -117,7 +117,9 @@ function renderPosts(posts) {
     button.setAttribute("data-bs-target", "#modal");
     button.setAttribute("data-id", `${id}`);
     button.classList.add("btn", "btn-outline-primary", "btn-sm");
-    a.classList.add("fw-bold");
+    a.classList.toggle('fw-bold', !state.uiState.visitedPosts.includes(post.id));
+    a.classList.toggle('fw-normal', state.uiState.visitedPosts.includes(post.id));
+    // a.classList.add("fw-bold");
     li.classList.add(
       "list-group-item",
       "d-flex",
@@ -147,7 +149,7 @@ function view(state) {
           case "processed":
             renderProcessed();
             renderFeeds(state.feeds);
-            renderPosts(state.posts);
+            renderPosts(state.posts, state);
             break;
           default:
             throw new Error(
