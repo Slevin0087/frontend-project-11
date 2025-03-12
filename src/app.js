@@ -49,7 +49,7 @@ function app() {
         url: i18nextInstance.t('feedback.invalidUrl'),
       },
     });
-
+    
     const state = {
       form: {
         url: [],
@@ -63,8 +63,46 @@ function app() {
       },
       lastChecked: {},
     };
-
+    
     const watchedForm = view(state);
+
+    const checkUpdatesForFeed = (feed) => {
+      fetchRSS(feed.url)
+        .then((data) => {
+          const { posts } = parserResponse(data);
+
+          const lastChecked = state.lastChecked[feed.url]
+            ? new Date(state.lastChecked[feed.url])
+            : new Date(0);
+
+          const newPosts = posts.filter((post) => {
+            const postDate = new Date(post.pubDate).getTime();
+            const isNew = postDate > lastChecked.getTime();
+            return isNew;
+          });
+
+          if (newPosts.length > 0) {
+            newPosts.forEach((post) => {
+              state.posts.unshift({
+                ...post,
+                id: uniqueId(),
+                feedId: feed.id,
+              });
+            });
+
+            state.lastChecked[feed.url] = new Date();
+            renderPosts(state.posts, state);
+          }
+        })
+        .catch((error) => {
+          console.error(`Error fetching updates for feed ${feed.url}:`, error);
+        });
+    };
+    const startUpdateChecking = () => {
+      const updatePromises = state.feeds.map(checkUpdatesForFeed);
+      Promise.all(updatePromises)
+        .then(() => setTimeout(startUpdateChecking, 5000));
+    };
 
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -73,9 +111,7 @@ function app() {
       const url = formData.get('url').trim();
       schema(state.form.url)
         .validate(url)
-        .then(() => {
-          return fetchRSS(url);
-        })
+        .then(() => fetchRSS(url))
         .then((data) => {
           const { feed, posts } = parserResponse(data);
           const feedId = uniqueId();
@@ -100,7 +136,7 @@ function app() {
         .catch((error) => {
           watchedForm.form.process = 'failed';
           const errorText = i18nextInstance.t(
-            typeError(error, i18nextInstance)
+            typeError(error, i18nextInstance),
           );
           switch (errorText) {
             case i18nextInstance.t('feedback.invalidUrl'):
@@ -138,43 +174,6 @@ function app() {
       }
     });
 
-    const checkUpdatesForFeed = (feed) => {
-      fetchRSS(feed.url)
-        .then((data) => {
-          const { posts } = parserResponse(data);
-
-          const lastChecked = state.lastChecked[feed.url]
-            ? new Date(state.lastChecked[feed.url])
-            : new Date(0);
-
-          const newPosts = posts.filter((post) => {
-            const postDate = new Date(post.pubDate).getTime();
-            const isNew = postDate > lastChecked.getTime();
-            return isNew;
-          });
-
-          if (newPosts.length > 0) {
-            newPosts.forEach((post) => {
-              state.posts.unshift({
-                ...post,
-                id: uniqueId(),
-                feedId: feed.id,
-              });
-            });
-
-            state.lastChecked[feed.url] = new Date();
-            renderPosts(state.posts, state);
-          }
-        })
-        .catch((error) => {
-          console.error(`Error fetching updates for feed ${feed.url}:`, error);
-        });
-    };
-    const startUpdateChecking = () => {
-      const updatePromises = state.feeds.map(checkUpdatesForFeed);
-      Promise.all(updatePromises)
-      .then(() => setTimeout(startUpdateChecking, 5000));
-    };
   });
 }
 
