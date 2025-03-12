@@ -173,7 +173,6 @@ function app() {
         modalInstance.show();
       }
     });
-
   });
 }
 
