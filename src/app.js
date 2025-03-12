@@ -158,7 +158,6 @@ function app() {
       const post = state.posts.find((p) => p.id === postId);
       if (!post) return;
       watchedForm.uiState.modal = {
-        // id: post.id,
         title: post.title,
         description: post.description,
         link: post.link,

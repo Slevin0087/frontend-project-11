@@ -32,13 +32,10 @@ function renderProcessed() {
 }
 
 function renderModal(m) {
-  // const a = domElements.postsElement.querySelector(`[data-id='${m.id}']`);
   const modal = document.querySelector('#modal');
   const modalTitle = modal.querySelector('.modal-title');
   const modalBody = modal.querySelector('.modal-body');
   const modalLink = modal.querySelector('.full-article');
-  // a.classList.remove('fw-bold');
-  // a.classList.add('fw-normal');
 
   modalTitle.textContent = m.title;
   modalBody.textContent = m.description;
