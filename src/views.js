@@ -132,7 +132,7 @@ function renderPosts(posts, state) {
       'justify-content-between',
       'align-items-start',
       'border-0',
-      'border-end-0'
+      'border-end-0',
     );
 
     li.append(a, button);

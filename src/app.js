@@ -49,7 +49,7 @@ function app() {
         url: i18nextInstance.t('feedback.invalidUrl'),
       },
     });
-    
+
     const state = {
       form: {
         url: [],
@@ -63,7 +63,7 @@ function app() {
       },
       lastChecked: {},
     };
-    
+
     const watchedForm = view(state);
 
     const checkUpdatesForFeed = (feed) => {
